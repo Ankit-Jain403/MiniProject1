@@ -19,5 +19,5 @@ jobs:
         sudo apt-get -y install libcunit1 libcunit1-doc libcunit1-dev 
     - name: make test
       run: |
-        make run -C 3_Implementation/ Test
+        make run -C 3_implementation/ Test
         valgrind make -C 3_implementation/ snake_game.out
