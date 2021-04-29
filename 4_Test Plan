@@ -1,1 +1,11 @@
+# TEST PLAN
+
+## Table : High level test plan
+
+| **Test ID** | **Description**                                              | **Exp I/P** | **Exp O/P** | **Actual Out** |**Type Of Test**  |    
+|-------------|--------------------------------------------------------------|------------|-------------|----------------|------------------|
+| 01 | Check if the snake moves based on direction of arrows given to it | Arrow keys  | TRUE | PASS | Requirement based |
+| 02 | Check if the length of the snake increases when it takes particle of food in|Corresponding movement in direction of arrow key | Lenght increases | PASS | Requirement based |
+| H_02 | Check if the game ends when snake collides with the wall | Corresponding movement in direction of arrow key | if true | game ends| Technical |
+| H_03 | Check if the game ends when snakes intersects with itself |Corresponding movement in direction of arrow key | if true | game ends |Technical|
 
