@@ -8,9 +8,9 @@ src/user_input.c \
 COV_SRC = my-test-main.c
 
 TEST_SRC = Test/my-test-main.c \
-Unity/unity.c 
+unity/unity.c 
 INC_H = inc
-INC_T = Unity
+INC_T = unity
 
 ifdef OS
    RM = del 
@@ -31,12 +31,12 @@ all:
 run: all
 	./$(PROJ_NAME).$(EXEC)
 test:
-	gcc Test/my-test-main.c -I -c Unity/unity.c -o Test/$(TEST_NAME).$(EXEC)
+	gcc Test/my-test-main.c -I -c unity/unity.c -o Test/$(TEST_NAME).$(EXEC)
 	./Test/$(TEST_NAME).$(EXEC)
 
 coverage:
 	cp Test/my-test-main.c .
-	gcc -fprofile-arcs -ftest-coverage -I $(INC_H) -I -c Unity/unity.c Test/my-test-main.c $(SRC) -o $(call FixPath, $(TEST_PROJ_NAME).$(EXEC))
+	gcc -fprofile-arcs -ftest-coverage -I $(INC_H) -I -c unity/unity.c Test/my-test-main.c $(SRC) -o $(call FixPath, $(TEST_PROJ_NAME).$(EXEC))
 	$(call FixPath, ./$(TEST_PROJ_NAME).$(EXEC))
 	gcov -a $(COV_SRC)
 	$(RM) *.$(EXEC)
