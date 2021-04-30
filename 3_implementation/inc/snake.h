@@ -1,26 +1,31 @@
-#include <stdlib.h>
+#include <stdbool.h>
 
-#ifndef SNAKE_H
-#define SNAKE_H
+typedef struct points {
+  int x;
+  int y;
+  struct points *next;
+} Points;
 
-/* snake structure */
-struct segment{
-	int x;
-	int y;
-	struct segment* next;
-};
-typedef struct segment segment;	/*  BASICALLY :        */
-typedef segment* snake;			/*  snake = segment*   */
+typedef struct {
+  Points *snake;
+  int foodX;
+  int foodY;
+  int xmax;
+  int ymax;
+} Board;
 
-#endif
+enum direction { UP, DOWN, LEFT, RIGHT };
 
-segment* create_segment(int x, int y);
-segment* prepend(snake sn, segment* sg);
-segment* prepend_xy(snake sn, int x, int y);
-void append(snake sn, segment* sg);
-int append_xy(snake sn, int x, int y);
-segment* last_segment(snake s);
-int intersect_snake(snake s);
-void delete_last_segment(snake s);
-segment* move_snake(snake s, int move_x, int move_y);
-int check_snake(snake s, int x, int y);
+void seedRandomGen();
+int createRandomInt(int max);
+
+Points *createPoints(int x, int y);
+Points *createSnake(Points *head, Points *tail);
+Board *createBoard(Points *snake, int foodX, int foodY, int row, int col);
+
+void moveSnake(enum direction dir, Board *board);
+
+bool collided(Board *board);
+bool suicide(Points *snake);
+
+void dropLast(Points *list);
