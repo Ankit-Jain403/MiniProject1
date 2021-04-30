@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "src/backend.h"
+#include "inc/backend.h"
 
 #test test_create_cell
     PointList* snake = create_cell(2, 3);
