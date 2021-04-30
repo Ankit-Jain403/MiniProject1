@@ -1,7 +1,8 @@
 PROJ_NAME = snake_game
 TEST_PROJ_NAME = Test_$(PROJ_NAME)
 
-SRC =src/snake.c \
+SRC =src/backend.c \
+src/frontend.c \
 
 
 COV_SRC = my-test-main.c
@@ -57,7 +58,7 @@ valgrind:
 
 
 clean:
-	rm test snake snake.o my-test-main.o *~
+	rm test snake backend.o frontend.o my-test-main.o *~
 	$(RM) *.gcn
 	$(RM) *.$(EXEC)
 	$(RM) *.gcda
