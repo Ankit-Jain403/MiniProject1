@@ -2,6 +2,7 @@
 #include<stdbool.h>
 #include<stdio.h>
 #include<time.h>
+#include<SDL2/SDL.h>
 
 // Game constants
 const int SCREEN_SIZE = 500;
