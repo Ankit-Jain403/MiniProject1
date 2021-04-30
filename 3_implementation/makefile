@@ -1,13 +1,15 @@
 PROJ_NAME = snake_game
 TEST_PROJ_NAME = Test_$(PROJ_NAME)
 
-SRC =src/backend.c \
-src/frontend.c \
+SRC =src/init_game.c \
+src/update_game.c \
+src/draw_game.c \
+src/input_handler.c \
 
 
-COV_SRC = my-test-main.ts
+COV_SRC = my-test-main.c
 
-TEST_SRC = Test/my-test-main.ts \
+TEST_SRC = Test/my-test-main.c \
 unity/unity.c 
 INC_H = inc
 INC_T = unity
@@ -26,17 +28,17 @@ endif
 .PHONY: run clean my-test-main doc all
 
 all:
-	gcc -I $(INC_H) $(SRC) Test/my-test-main.ts -o $(call FixPath,$(PROJ_NAME).$(EXEC))
+	gcc -I $(INC_H) $(SRC) Test/my-test-main.c -o $(call FixPath,$(PROJ_NAME).$(EXEC))
 	
 run: all
 	./$(PROJ_NAME).$(EXEC)
 test:
-	gcc Test/my-test-main.ts -I -c unity/unity.c -o Test/$(TEST_NAME).$(EXEC)
+	gcc Test/my-test-main.c -I -c unity/unity.c -o Test/$(TEST_NAME).$(EXEC)
 	./Test/$(TEST_NAME).$(EXEC)
 
 coverage:
-	cp Test/my-test-main.ts .
-	gcc -fprofile-arcs -ftest-coverage -I $(INC_H) -I -c unity/unity.c Test/my-test-main.ts $(SRC) -o $(call FixPath, $(TEST_PROJ_NAME).$(EXEC))
+	cp Test/my-test-main.c .
+	gcc -fprofile-arcs -ftest-coverage -I $(INC_H) -I -c unity/unity.c Test/my-test-main.c $(SRC) -o $(call FixPath, $(TEST_PROJ_NAME).$(EXEC))
 	$(call FixPath, ./$(TEST_PROJ_NAME).$(EXEC))
 	gcov -a $(COV_SRC)
 	$(RM) *.$(EXEC)
@@ -44,13 +46,13 @@ coverage:
 	$(RM) *.gcno
 	$(RM) *.c.gcov
 	$(RM) *.gcn
-	$(RM) my-test-main.ts
+	$(RM) my-test-main.c
 
 
 cppcheck:
-	cppcheck --enable=all $(SRC) my-test-main.ts
+	cppcheck --enable=all $(SRC) my-test-main.c
 debug:
-	gcc -I $(INC_H) $(SRC) Test/my-test-main.ts -g -o $(PROJ_NAME).$(EXEC)
+	gcc -I $(INC_H) $(SRC) Test/my-test-main.c -g -o $(PROJ_NAME).$(EXEC)
 	gdb $(PROJ_NAME).$(EXEC)
 
 valgrind:
@@ -58,7 +60,7 @@ valgrind:
 
 
 clean:
-	rm test snake backend.o frontend.o my-test-main.o *~
+	rm test snake init_game.o update_game.o draw_game.o input_handler.o my-test-main.o *~
 	$(RM) *.gcn
 	$(RM) *.$(EXEC)
 	$(RM) *.gcda
