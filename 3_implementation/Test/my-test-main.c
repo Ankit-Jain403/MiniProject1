@@ -1,102 +1,91 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <ctype.h>
-#include "user_input.h"
-#include "board.h"
 #include "snake.h"
+#include <ncurses.h>
 
-int main(void)
+enum direction getDirection(enum direction dir);
+void render(Board *board);
+
+int main()
 {
-	/* The board itself */
-	char  board[BOARD_Y][BOARD_X];
-	
-	/* Variable to store user's input */
-	char direction = '\0';
-	
-	/* Snake */
-	snake my_sn;
+  initscr();
 
-	/* Creates the start point, which is always in the middle */
-	my_sn = create_segment((BOARD_X % 2 == 0 ? BOARD_X / 2 : BOARD_X + 1 / 2), (BOARD_Y % 2 == 0 ? BOARD_Y / 2 : (BOARD_Y + 1) / 2));
+  /* `raw` / `cbreak` disable line buffering */
+  /* `cbreak` captures control characters */
+  cbreak();
 
-	/* Clears the terminal to start the game :) */
-	system("clear");
+  keypad(stdscr, TRUE);
+  noecho();
 
-	/* Initializes board */
-	init_board(board);
+  /* set cursor visibility */
+  curs_set(0);
 
-	/* Draws snake body into the board */
-	update_board(board, my_sn);
+  /* TODO: check out `nodelay` */
+  timeout(100);
 
-	/* Prints the board */
-	print_board(board);
+  int row;
+  int col;
+  Board *board;
+  enum direction dir;
 
-	/* Enters 'special' mode of terminal */
-	entergamemode();
+  getmaxyx(stdscr, row, col);
 
-	/* Game life */
-	while (1) {
-		
-		/* Gets input from the user */
-		get_input(&direction);
+  seedRandomGen();
 
-		/* Checks the input, then move the snake:
-												Ate food - just prepend one block
-												Otherwise - move the snake to the direction */
-		switch (toupper(direction)) {
+  dir = RIGHT;
+  board = createBoard(createSnake(createPoints(3, 2),
+                                  createPoints(2, 2)),
+                      createRandomInt(col),
+                      createRandomInt(row),
+                      row,
+                      col);
 
-			case('W'):
-				if(0) {		//  !!  Must create food and check if snake ate it in these if statements !!
-					my_sn = prepend_xy(my_sn, my_sn->x, my_sn->y - 1);
-				}
-				else {
-					my_sn = move_snake(my_sn, my_sn->x, my_sn->y - 1);
-				}
-				break;
+  while (!collided(board) && !suicide(board->snake)) {
+    clear();
 
-			case('S'):
-				if(0) {
-					my_sn = prepend_xy(my_sn, my_sn->x, my_sn->y + 1);
-				}
-				else {
-					my_sn = move_snake(my_sn, my_sn->x, my_sn->y + 1);
-				}
-				break;
+    render(board);
 
-			case('D'):
-				if(0) {
-					my_sn = prepend_xy(my_sn, my_sn->x + 1, my_sn->y);
-				}
-				else {
-					my_sn = move_snake(my_sn, my_sn->x + 1, my_sn->y);
-				}
-				break;
+    refresh();
 
-			case('A'):
-				if(0) {
-					my_sn = prepend_xy(my_sn, my_sn->x - 1, my_sn->y);
-				}
-				else {
-					my_sn = move_snake(my_sn, my_sn->x - 1, my_sn->y);
-				}
-				break;
-		}
+    dir = getDirection(dir);
+    moveSnake(dir, board);
+  }
 
-		/* Clears the terminal */
-		system("clear");
+  endwin();
 
-		/* Initializes (cleares) the board */
-		init_board(board);
+  return 0;
+}
 
-		/* Draws updated body to board */
-		update_board(board, my_sn);
+enum direction getDirection(enum direction dir)
+{
+  int c = getch();
 
-		/* Prints updated board */
-		print_board(board);
-	}
+  switch (c) {
+  case KEY_UP:
+    if (dir != DOWN) return UP;
 
-	/* Exits 'special' mode of terminal */
-	endgamemode();
+  case KEY_DOWN:
+    if (dir != UP) return DOWN;
 
-	return 0;
+  case KEY_LEFT:
+    if (dir != RIGHT) return LEFT;
+
+  case KEY_RIGHT:
+    if (dir != LEFT) return RIGHT;
+
+  default:
+    return dir;
+  }
+}
+
+void render(Board *board)
+{
+  Points *snake = board->snake;
+
+  while (snake) {
+    mvaddch(snake->y, snake->x, ACS_BLOCK);
+    snake = snake->next;
+  }
+
+  if (board->foodX > 0 && board->foodY > 0) {
+    mvaddch(board->foodY, board->foodX, ACS_DIAMOND);
+  }
 }
