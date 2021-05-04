@@ -1,47 +1,106 @@
-#include"snake.h"
-#include<stdbool.h>
-#include<stdio.h>
-#include<time.h>
-#include<SDL2/SDL.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include "input.h"
+#include "output.h"
 
-// Game constants
-const int SCREEN_SIZE = 500;
-const int SQUARE_SIZE = SCREEN_SIZE / GRID_SIZE;
-const int UPDATE_FPS = 10;
-const int TICKS_PER_FRAME = 1000 / UPDATE_FPS;
-// Window variables
-SDL_Window* window = NULL;
-SDL_Renderer* w_renderer = NULL;
-bool game_running = true;
-SDL_Event e;
+#define WALL '#'
+#define PLAYER 'S'
+#define FOOD 'F'
+#define AIR ' '
 
-// Main function lol
-int main() {
-	srand(time(NULL));
-	// Init Game
-	if(!init_game())
-		return 1;
-	struct Game game;
-	create_game(&game);
+#define MAX_TRAIL_LENGTH 1024  // BUFFER_SIZE_X * BUFFER_SIZE_Y
 
-	// Timer
-	Uint32 capTimer;
-	while(game_running) {
-		// Ticks per frame
-		capTimer = SDL_GetTicks();
-		// Game logic
-		input_handler(&(game.player));
-		update_game(&game);
-		draw_game(&game);
-		// Frame cap
-		int frameTicks = SDL_GetTicks() - capTimer;
-		if(frameTicks < TICKS_PER_FRAME) {
-			SDL_Delay(TICKS_PER_FRAME - frameTicks);
-		}
-	}
-	// End game and destroy the window
-	SDL_DestroyWindow(window);
-	SDL_DestroyRenderer(w_renderer);
-	SDL_Quit();
+struct block {
+    int x;
+    int y;
+} player, food;
+int points;
+struct block trail[MAX_TRAIL_LENGTH];
+int trail_index = 0;
+char key = 0;
+int main(int argc, char const *argv[]) {
+    // Seed the random generator
+    srand(time(NULL));
+
+    // Setup input
+    setupEnterAvoidance();
+
+    // Initialize game
+    reset();
+
+    // Game loop
+    while (key != 'q') {
+        // Get Input
+        key = readInput();
+
+        // Check for reset key
+        if (key == 'r') {
+            reset();
+            continue;
+        }
+
+        if (points > 0) {
+            // Remove old trail block
+            buffer[trail[trail_index].x][trail[trail_index].y] = AIR;
+        }
+
+        // Replace old player position with wall (trail)
+        buffer[player.x][player.y] = (points > 0) ? WALL : AIR;
+        trail[trail_index].x = player.x;
+        trail[trail_index].y = player.y;
+
+        if (points > 0) {
+            // Iterate through trail array
+            trail_index++;
+            if (trail_index >= points) {
+                trail_index = 0;
+            }
+        }
+
+        // Update player position
+        switch (key) {
+            case 'w':
+                player.y--;
+                break;
+            case 's':
+                player.y++;
+                break;
+            case 'a':
+                player.x--;
+                break;
+            case 'd':
+                player.x++;
+                break;
+            default:
+                break;
+        }
+
+        // Check new player position for wall
+        if (buffer[player.x][player.y] == WALL) {
+            gameover();
+        }
+
+        // Check new player position for food
+        char replacefood = 0;
+        if (buffer[player.x][player.y] == FOOD) {
+            points++;
+            replacefood = 1;
+        }
+
+        // Replace new position with player
+        buffer[player.x][player.y] = PLAYER;
+
+        // If food has been eaten, place new food
+        if (replacefood) {
+            placeFood();
+        }
+
+        // Print output
+        printBuffer();
+        printf("\nPoints: %d\n", points);
+    }
+
+    printf("\n");
     return 0;
 }
