@@ -5,7 +5,7 @@ SRC =src/clearTrail.c \
 src/createGameField.c \
 src/gameover.c \
 src/placeFood.c \
-src/reset.c \
+src/reset.c 
 
 
 COV_SRC = my-test-main.c
