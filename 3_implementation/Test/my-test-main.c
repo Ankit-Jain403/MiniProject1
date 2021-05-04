@@ -19,6 +19,75 @@ int points;
 struct block trail[MAX_TRAIL_LENGTH];
 int trail_index = 0;
 char key = 0;
+
+void clearTrail() {
+    for (int i = 0; i < MAX_TRAIL_LENGTH; i++) {
+        trail[i].x = -1;
+        trail[i].y = -1;
+    }
+}
+
+void createGameField() {
+    // Walls
+    for (int x = 0; x < BUFFER_SIZE_X; x++) {
+        buffer[x][0] = WALL;
+        buffer[x][BUFFER_SIZE_Y - 1] = WALL;
+    }
+    for (int y = 0; y < BUFFER_SIZE_Y; y++) {
+        buffer[0][y] = WALL;
+        buffer[BUFFER_SIZE_X - 1][y] = WALL;
+    }
+}
+
+void placeFood() {
+    do {
+        food.x = rand() % BUFFER_SIZE_X;
+        food.y = rand() % BUFFER_SIZE_Y;
+        if (buffer[food.x][food.y] == AIR) {
+            buffer[food.x][food.y] = FOOD;
+        }
+    } while (buffer[food.x][food.y] != AIR && buffer[food.x][food.y] != FOOD);
+}
+
+void reset() {
+    // Reset input
+    key = 0;
+    last_input = 0;
+
+    // Initialize game field
+    clear(AIR);
+    createGameField();
+    clearTrail();
+    player.x = BUFFER_SIZE_X / 2;
+    player.y = BUFFER_SIZE_Y / 2;
+    points = 0;
+    placeFood();
+}
+
+void gameover() {
+    printf("\n\nGAME OVER\nYour score: %d\n", points);
+
+    // Ask whether to reset or not:
+    while (key != 'y' && key != 'n') {
+        printf("Reset? [y/n]: ");
+        key = getchar();
+        printf("\n");
+    }
+    switch (key) {
+        case 'y':
+            reset();
+            printf("\n");
+            break;
+        case 'n':
+            key = 'q';
+            printf("\n\nHere, have a look at your death:");
+            break;
+        default:
+            printf(" Illegal Input. How did you get here anyway?!\n");
+            break;
+    }
+}
+
 int main(int argc, char const *argv[]) {
     // Seed the random generator
     srand(time(NULL));
