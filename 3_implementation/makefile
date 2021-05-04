@@ -1,10 +1,11 @@
 PROJ_NAME = snake_game
 TEST_PROJ_NAME = Test_$(PROJ_NAME)
 
-SRC =src/init_game.c \
-src/update_game.c \
-src/draw_game.c \
-src/input_handler.c \
+SRC =src/clearTrail.c \
+src/createGameField.c \
+src/gameover.c \
+src/placeFood.c \
+src/reset.c \
 
 
 COV_SRC = my-test-main.c
@@ -60,7 +61,7 @@ valgrind:
 
 
 clean:
-	rm test snake init_game.o update_game.o draw_game.o input_handler.o my-test-main.o *~
+	rm test snake clearTrail.o createGameField.o gameover.o placeFood.o reset.o my-test-main.o *~
 	$(RM) *.gcn
 	$(RM) *.$(EXEC)
 	$(RM) *.gcda
