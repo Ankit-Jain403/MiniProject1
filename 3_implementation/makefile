@@ -4,8 +4,7 @@ TEST_PROJ_NAME = Test_$(PROJ_NAME)
 SRC =src/game_loop.c \
 src/helper_functions.c \
 src/high_scores.c \
-src/main.c \
-src/menu.c \
+src/menu.c 
 
 
 COV_SRC = my-test-main.c
@@ -61,7 +60,7 @@ valgrind:
 
 
 clean:
-	rm test snake game_loop.o helper_functions.o high_scores.o main.o menu.o my-test-main.o *~
+	rm test snake game_loop.o helper_functions.o high_scores.o menu.o my-test-main.o *~
 	$(RM) *.gcn
 	$(RM) *.$(EXEC)
 	$(RM) *.gcda
