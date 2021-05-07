@@ -13,7 +13,7 @@ COV_SRC = my-test-main.c
 TEST_SRC = Test/my-test-main.c \
 unity/unity.c 
 INC_H = inc
-INC_T = Unity
+INC_T = unity
 
 ifdef OS
    RM = del 
